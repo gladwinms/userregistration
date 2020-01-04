@@ -3,8 +3,8 @@
 <title>LOGIN</title>
 <body>
 <form method="post" enctype="multipart/form-data" >
-Username:<input type="text" name="username"><br><br>
-Password:<input type="password" name="password"><br><br>
+username:<input type="text" name="username"><br><br>
+password:<input type="password" name="password"><br><br>
 <input type="submit" value="submit" name="button"><br><br>
 </form>
 </body>
@@ -12,20 +12,28 @@ Password:<input type="password" name="password"><br><br>
 
 <?php
 include 'connection.php';
+session_start();
+if(isset($_SESSION['user_id'] ))
+{header('location:table.php');}
+
 if(isset($_POST['button']))
 {
-	$Username=$_POST['username'];
-	$Password=$_POST['password'];
-	$result=mysqli_query($con,"SELECT `username`, `password` 
-	FROM `tbl_user_login` WHERE  username ='$Username' AND password ='$Password'");
-	if(mysqli_num_rows($result)==1)
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	$query=mysqli_query($con,"SELECT * 
+	FROM `tbl_user_login` WHERE  username ='$username' AND password ='$password'");
+	//var_dump($row_data)
+	if(mysqli_num_rows($query)>0)
 	{
-        echo " You Have Successfully Logged in";
-        exit();
+		$row_data = mysqli_fetch_assoc($query);
+		$_SESSION['user_id'] = $row_data['login_id'];
+       header('location:table.php');
+        //exit();
     }
     else
 	{
-        echo " You Have Entered Incorrect Password";
+        
+       echo " <script> alert('You Have Entered Incorrect Password');</script>";
         exit();
     }
 
